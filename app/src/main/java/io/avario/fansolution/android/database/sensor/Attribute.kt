@@ -1,0 +1,16 @@
+package io.avario.fansolution.android.database.sensor
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+
+@Entity(tableName = "sensor_attributes", primaryKeys = ["sensor_id", "name"])
+data class Attribute(
+    @ColumnInfo(name = "sensor_id")
+    val sensorId: String,
+    @ColumnInfo(name = "name")
+    val name: String,
+    @ColumnInfo(name = "value")
+    var value: String,
+    @ColumnInfo(name = "value_type")
+    var valueType: String
+)

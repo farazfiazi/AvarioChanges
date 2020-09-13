@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="io.avario.fansolution.android">
+
+    <application
+        android:name=".HomeAssistantApplication" >
+        <meta-data android:name="io.sentry.auto-init" android:value="${sentryEnabled}" />
+        <meta-data android:name="io.sentry.release" android:value="${sentryRelease}" />
+        <meta-data android:name="io.sentry.session-tracking.enable" android:value="true" />
+        <meta-data android:name="io.sentry.dsn" android:value="https://2d646f40f9574e0b9579e301a69bb030@o427061.ingest.sentry.io/5372876" />
+
+        <receiver
+            android:name=".notifications.NotificationActionReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".notifications.NotificationDeleteReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".notifications.NotificationContentReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".notifications.MessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorPrimary" />
+    </application>
+
+</manifest>

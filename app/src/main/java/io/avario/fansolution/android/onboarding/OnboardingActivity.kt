@@ -1,0 +1,109 @@
+package io.avario.fansolution.android.onboarding
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import io.avario.fansolution.android.R
+import io.avario.fansolution.android.onboarding.authentication.AuthenticationFragment
+import io.avario.fansolution.android.onboarding.authentication.AuthenticationListener
+import io.avario.fansolution.android.onboarding.discovery.DiscoveryFragment
+import io.avario.fansolution.android.onboarding.discovery.DiscoveryListener
+import io.avario.fansolution.android.onboarding.integration.MobileAppIntegrationFragment
+import io.avario.fansolution.android.onboarding.integration.MobileAppIntegrationListener
+import io.avario.fansolution.android.onboarding.manual.ManualSetupFragment
+import io.avario.fansolution.android.onboarding.manual.ManualSetupListener
+import io.avario.fansolution.android.webview.WebViewActivity
+
+class OnboardingActivity : AppCompatActivity(), DiscoveryListener, ManualSetupListener,
+    AuthenticationListener, MobileAppIntegrationListener {
+
+    companion object {
+        const val SESSION_CONNECTED = "is_registered"
+        private const val TAG = "OnboardingActivity"
+
+        fun newInstance(context: Context): Intent {
+            return Intent(context, OnboardingActivity::class.java)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_onboarding)
+
+        val sessionConnected = intent.extras?.getBoolean(SESSION_CONNECTED) ?: false
+
+        if (sessionConnected) {
+            val mobileAppIntegrationFragment = MobileAppIntegrationFragment.newInstance()
+            mobileAppIntegrationFragment.retainInstance = true
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.content, mobileAppIntegrationFragment)
+                .commit()
+        } else {
+            val discoveryFragment = DiscoveryFragment.newInstance()
+            discoveryFragment.retainInstance = true
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.content, discoveryFragment)
+                .commit()
+        }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    override fun onSelectManualSetup() {
+        val manualSetupFragment = ManualSetupFragment.newInstance()
+        manualSetupFragment.retainInstance = true
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.content, manualSetupFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onHomeAssistantDiscover() {
+        val authenticationFragment = AuthenticationFragment.newInstance()
+        authenticationFragment.retainInstance = true
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.content, authenticationFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onSelectUrl() {
+        val authenticationFragment = AuthenticationFragment.newInstance()
+        authenticationFragment.retainInstance = true
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.content, authenticationFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onAuthenticationSuccess() {
+        val mobileAppIntegrationFragment = MobileAppIntegrationFragment.newInstance()
+        mobileAppIntegrationFragment.retainInstance = true
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.content, mobileAppIntegrationFragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onIntegrationRegistrationComplete() {
+        startWebView()
+    }
+
+    private fun startWebView() {
+        startActivity(WebViewActivity.newInstance(this))
+        finish()
+    }
+}
